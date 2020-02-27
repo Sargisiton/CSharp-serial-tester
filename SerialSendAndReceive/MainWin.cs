@@ -32,6 +32,11 @@ namespace SerialSendAndReceive
         {
             //串口ComboBox
             PortList = new List<string>(SerialPort.GetPortNames());
+            if (PortList.Count == 0)
+            {
+                MessageBox.Show("当前设备上未检测到可用串口！");
+                Environment.Exit(0);
+            }
             PortSelect.DataSource = PortList;
             PortSelect.SelectedIndex = 0;
 

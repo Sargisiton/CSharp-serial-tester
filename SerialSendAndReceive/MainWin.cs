@@ -11,8 +11,9 @@ namespace SerialSendAndReceive
 
         //各种列表
         private List<string> PortList;//串口列表
-        private List<int> BaudList = new List<int>(new int[] {
-            50, 75, 100, 150, 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 43000, 56000, 57600, 115200 });//波特率列表
+        private List<int> BaudList = new List<int>(new int[] { 50, 75, 100, 110, 150, 300, 600, 1200, 2400, 4800,
+            9600, 19200, 38400, 43000, 56000, 57600, 115200, 128000, 230400, 256000,
+            460800, 500000, 512000, 600000, 750000, 921600, 1000000, 1500000, 2000000 });//波特率列表
         private List<int> DataBitsList = new List<int>(new int[] { 5, 6, 7, 8 });//数据位长度列表
         private List<Text_Value_Pair<StopBits>> StopBitsList = new List<Text_Value_Pair<StopBits>>(new Text_Value_Pair<StopBits>[] {
             new Text_Value_Pair<StopBits>{TextField="0",ValueField=StopBits.None },
@@ -42,7 +43,7 @@ namespace SerialSendAndReceive
 
             //波特率ComboBox
             BaudSelect.DataSource = BaudList;
-            BaudSelect.SelectedIndex = BaudList.Count - 1;
+            BaudSelect.SelectedIndex = 16;
 
             //数据位ComboBox
             DataBitsSelect.DataSource = DataBitsList;

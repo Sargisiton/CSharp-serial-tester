@@ -30,7 +30,7 @@ namespace SerialSendAndReceive
         private SerialPort serial;//串口
         private bool IniFin = false;//是否初始化结束
 
-        private int StopBitSelectIndex = 3;//用来修复某些设置下特定停止位长度无法使用而造成程序崩溃的BUG
+        private int StopBitSelectIndex = 1;//用来修复某些设置下特定停止位长度无法使用而造成程序崩溃的BUG
         private void InitializeUI()//UI初始化
         {
             //串口ComboBox

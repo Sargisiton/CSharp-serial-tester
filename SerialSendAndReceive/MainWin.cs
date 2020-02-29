@@ -29,6 +29,8 @@ namespace SerialSendAndReceive
 
         private SerialPort serial;//串口
         private bool IniFin = false;//是否初始化结束
+
+        private int StopBitSelectIndex = 3;//用来修复某些设置下特定停止位长度无法使用而造成程序崩溃的BUG
         private void InitializeUI()//UI初始化
         {
             //串口ComboBox
@@ -132,18 +134,22 @@ namespace SerialSendAndReceive
             }
             else//串口已关闭，需打开
             {
-                try
-                {
-                    serial.Open();
-                    PortControlBtn.Text = "关闭";
-                    Text = "串口通讯器 - " + PortSelect.Text;
-                }
-                catch
-                {
-                    PortControlBtn.Text = "开启";
-                    DisplayArea.AppendText("串口打开未成功！" + Environment.NewLine);
-                    Text = "串口通讯器 - 已关闭";
-                }
+                OpenSerial();
+            }
+        }
+        private void OpenSerial()
+        {
+            try
+            {
+                serial.Open();
+                PortControlBtn.Text = "关闭";
+                Text = "串口通讯器 - " + PortSelect.Text;
+            }
+            catch
+            {
+                PortControlBtn.Text = "开启";
+                DisplayArea.AppendText("串口打开未成功！" + Environment.NewLine);
+                Text = "串口通讯器 - 已关闭";
             }
         }
         private void SendBtn_Click(object sender, EventArgs e)//发送按钮
@@ -169,7 +175,7 @@ namespace SerialSendAndReceive
             bool isPortOnCache = serial.IsOpen;
             serial.Close();
             serial.PortName = PortSelect.Text;
-            if (isPortOnCache) serial.Open();
+            if (isPortOnCache) OpenSerial();
         }
         private void BaudSelect_SelectedIndexChanged(object sender, EventArgs e)//波特率选择
         {
@@ -177,7 +183,7 @@ namespace SerialSendAndReceive
             bool isPortOnCache = serial.IsOpen;
             serial.Close();
             serial.BaudRate = (int)BaudSelect.SelectedValue;
-            if (isPortOnCache) serial.Open();
+            if (isPortOnCache) OpenSerial();
         }
         private void DataBitsSelect_SelectedIndexChanged(object sender, EventArgs e)//数据位位数选择
         {
@@ -185,15 +191,24 @@ namespace SerialSendAndReceive
             bool isPortOnCache = serial.IsOpen;
             serial.Close();
             serial.DataBits = (int)DataBitsSelect.SelectedValue;
-            if (isPortOnCache) serial.Open();
+            if (isPortOnCache) OpenSerial();
         }
         private void StopBitsSelect_SelectedIndexChanged(object sender, EventArgs e)//结束位位数选择
         {
             if (!IniFin) return;
             bool isPortOnCache = serial.IsOpen;
             serial.Close();
-            serial.StopBits = (StopBits)StopBitsSelect.SelectedValue;
-            if (isPortOnCache) serial.Open();
+            try
+            {
+                serial.StopBits = (StopBits)StopBitsSelect.SelectedValue;
+            }
+            catch
+            {
+                StopBitsSelect.SelectedIndex = StopBitSelectIndex;
+                MessageBox.Show("当前状态下该结束位长度不可用！");
+            }
+            if (isPortOnCache) OpenSerial();
+            StopBitSelectIndex = StopBitsSelect.SelectedIndex;
         }
         private void ParitySelect_SelectedIndexChanged(object sender, EventArgs e)//奇偶校验模式选择
         {
@@ -201,7 +216,7 @@ namespace SerialSendAndReceive
             bool isPortOnCache = serial.IsOpen;
             serial.Close();
             serial.Parity = (Parity)ParitySelect.SelectedValue;
-            if (isPortOnCache) serial.Open();
+            if (isPortOnCache) OpenSerial();
         }
     }
     public class Text_Value_Pair<T>//自己定义的文本-值对泛型
